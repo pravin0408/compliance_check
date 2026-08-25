@@ -1,11 +1,11 @@
-name: Generate Compliance Dashboard
+name: Deploy Interactive Real-Time Compliance Checker
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Run automatically daily at midnight UTC
+    - cron: '0 0 * * *' 
   push:
-    branches: [ "main", "master" ] # Run automatically whenever devices.csv is updated
-  workflow_dispatch: # Allow manual trigger button in GitHub Actions tab
+    branches: [ "main", "master" ]
+  workflow_dispatch: 
 
 permissions:
   contents: read
@@ -26,24 +26,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          
-      - name: Install dependencies
-        run: pip install requests
-        
-      - name: Generate Dashboard HTML
-        run: python generate_dashboard.py
-        
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './public'
+          path: './'
           
       - name: Deploy to GitHub Pages
         id: deployment

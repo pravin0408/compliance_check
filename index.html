@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live OS & Patch Compliance Checker</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --primary: #2c3e50;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --text-main: #333;
+            --text-muted: #666;
+            --border: #e0e6ed;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+        }
+
+        .form-card, .result-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        input {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #1a252f;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Results Area */
+        #loading {
+            text-align: center;
+            display: none;
+            color: var(--text-muted);
+            padding: 20px;
+            font-size: 1.2em;
+        }
+
+        #resultBox {
+            display: none;
+        }
+
+        .status-banner {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .status-banner h2 { margin: 0 0 10px 0; display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .status-banner p { margin: 0; font-size: 1.1em; font-weight: 500; }
+
+        .s-compliant { background-color: #e8f8f5; border: 2px solid var(--success); color: #1e8449; }
+        .s-noncompliant { background-color: #fdedec; border: 2px solid var(--danger); color: #c0392b; }
+        .s-manual { background-color: #fef9e7; border: 2px solid var(--warning); color: #b7950b; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .metric span.label {
+            display: block;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .metric span.value {
+            font-size: 1.25em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .metric span.value.latest-patch {
+            color: #2980b9;
+        }
+
+        .raw-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        .raw-data-table th, .raw-data-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Interactive Real-Time OS Compliance Checker</h1>
+            <p>Directly query the internet lifecycle databases. No predefined device lists required.</p>
+        </div>
+
+        <div class="form-card">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vendor">Vendor Name <span style="color:#e74c3c">*</span></label>
+                    <input type="text" id="vendor" placeholder="e.g. Microsoft, Red Hat, vmware" required>
+                </div>
+                <div class="form-group">
+                    <label for="osName">OS or Appliance Name <span style="color:#e74c3c">*</span></label>
+                    <input type="text" id="osName" placeholder="e.g. Windows Server, RHEL, ESXi" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="osVersion">OS Version <span style="color:#e74c3c">*</span></label>
+                    <input type="text" id="osVersion" placeholder="e.g. 2019, 8.4, 22.04" required>
+                </div>
+                <div class="form-group">
+                    <label for="osBuild">Current Patch/Build On Device</label>
+                    <input type="text" id="osBuild" placeholder="(Optional) e.g. 17763.5576, 8.10">
+                </div>
+            </div>
+
+            <button onclick="checkCompliance()">Validate Live Compliance</button>
+        </div>
+
+        <div id="loading">📡 Querying Global Lifecycle Databases...</div>
+
+        <div class="result-card" id="resultBox">
+            <div id="statusBanner" class="status-banner">
+                <h2 id="statusTitle"></h2>
+                <p id="statusReason"></p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <span class="label">Target OS Version</span>
+                    <span class="value" id="resTargetVer"></span>
+                </div>
+                <div class="metric">
+                    <span class="label">Actual Latest Vendor Patch</span>
+                    <span class="value latest-patch" id="resLatestPatch"></span>
+                </div>
+                <div class="metric">
+                    <span class="label">Vendor Release Date</span>
+                    <span class="value" id="resReleaseDate"></span>
+                </div>
+                <div class="metric">
+                    <span class="label">Official End-of-Life Date</span>
+                    <span class="value" id="resEolDate"></span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom:10px; font-size:1em; color:var(--text-muted)">Recent Standard Releases for this Platform:</h3>
+            <table class="raw-data-table" id="recentReleases">
+                <thead><tr><th>Version Cycle</th><th>Latest Build</th><th>EOL Date</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function normalizeProductName(vendor, osName) {
+            const combined = `${vendor} ${osName}`.toLowerCase();
+            if (combined.includes("windows server")) return "windows-server";
+            if (combined.includes("windows")) return "windows";
+            if (combined.includes("red hat") || combined.includes("rhel") || combined.includes("redhat")) return "rhel";
+            if (combined.includes("ubuntu")) return "ubuntu";
+            if (combined.includes("debian")) return "debian";
+            if (combined.includes("suse")) return "sles";
+            if (combined.includes("amazon")) return "amazon-linux";
+            if (combined.includes("fortinet") || combined.includes("fortios")) return "fortios";
+            if (combined.includes("cisco") && combined.includes("ios")) return "cisco-ios-xe";
+            if (combined.includes("esxi")) return "esxi";
+            if (combined.includes("vcenter")) return "vcenter";
+            return osName.toLowerCase().trim().replace(/ /g, "-");
+        }
+
+        async function checkCompliance() {
+            const vendor = document.getElementById('vendor').value;
+            const osName = document.getElementById('osName').value;
+            const osVersion = document.getElementById('osVersion').value;
+            const osBuild = document.getElementById('osBuild').value;
+
+            if(!vendor || !osName || !osVersion) {
+                alert("Vendor, OS Name, and OS Version are required fields.");
+                return;
+            }
+
+            const productId = normalizeProductName(vendor, osName);
+            const url = `https://endoflife.date/api/${productId}.json`;
+
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch(url, { headers: { "Accept": "application/json" }});
+                
+                if (response.status === 404) {
+                    renderResult('manual', `Proprietary Appliance`, `The vendor "${vendor} ${osName}" does not publish open machine-readable lifecycle APIs. A manual support check is required on the vendor portal.`);
+                    clearMetrics();
+                    document.getElementById('recentReleases').style.display = 'none';
+                    return;
+                }
+
+                const data = await response.json();
+                
+                let targetCycle = data.find(c => String(c.cycle) === osVersion);
+
+                // Populate the bottom table regardless of compliance status
+                const tbody = document.querySelector('#recentReleases tbody');
+                tbody.innerHTML = '';
+                data.slice(0, 5).forEach(c => {
+                    tbody.innerHTML += `<tr><td>${c.cycle}</td><td>${c.latest}</td><td>${c.eol || 'Active'}</td></tr>`;
+                });
+                document.getElementById('recentReleases').style.display = 'table';
+
+                if (!targetCycle) {
+                    renderResult('noncompliant', 'Version Not Found / Unsupported', `The version "${osVersion}" was not found in the active lifecycle database. It may be fully deprecated or incorrectly typed.`);
+                    clearMetrics();
+                    return;
+                }
+
+                // Gather facts
+                const actualLatest = targetCycle.latest;
+                const actualEol = targetCycle.eol;
+                const releaseDate = targetCycle.latestReleaseDate || "N/A";
+
+                document.getElementById('resTargetVer').innerText = osVersion;
+                document.getElementById('resLatestPatch').innerText = actualLatest;
+                document.getElementById('resReleaseDate').innerText = releaseDate;
+                document.getElementById('resEolDate').innerText = actualEol || "Active Support";
+
+                // Evaluate EOL Check
+                let isEol = false;
+                if (actualEol && typeof actualEol === 'string') {
+                    const eolDateObj = new Date(actualEol);
+                    if (new Date() > eolDateObj) isEol = true;
+                }
+
+                if (isEol) {
+                    renderResult('noncompliant', 'NON-COMPLIANT 🔴', `Lifecycle Expired. Official End-of-Life occurred on ${actualEol}.`);
+                } else if (osBuild) {
+                    if (String(osBuild).trim() === String(actualLatest)) {
+                        renderResult('compliant', 'COMPLIANT 🟢', `The device is running the absolutely latest security patch verified by the vendor.`);
+                    } else {
+                        renderResult('noncompliant', 'NON-COMPLIANT 🔴', `Missing Security Patches! The device is running build [${osBuild}], but the current safe vendor baseline is [${actualLatest}].`);
+                    }
+                } else {
+                    renderResult('compliant', 'ACTIVE SUPPORT 🟢', `This OS is actively supported. Please ensure you manually verify the device is running Patch [${actualLatest}].`);
+                }
+
+            } catch (error) {
+                renderResult('manual', `Network Error`, `Failed to reach the API server: ${error.message}`);
+                clearMetrics();
+            }
+        }
+
+        function renderResult(type, title, reason) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('resultBox').style.display = 'block';
+
+            const banner = document.getElementById('statusBanner');
+            document.getElementById('statusTitle').innerText = title;
+            document.getElementById('statusReason').innerText = reason;
+
+            banner.className = 'status-banner'; // reset
+            if(type === 'compliant') banner.classList.add('s-compliant');
+            else if(type === 'noncompliant') banner.classList.add('s-noncompliant');
+            else banner.classList.add('s-manual');
+        }
+
+        function clearMetrics() {
+            document.getElementById('resTargetVer').innerText = '-';
+            document.getElementById('resLatestPatch').innerText = '-';
+            document.getElementById('resReleaseDate').innerText = '-';
+            document.getElementById('resEolDate').innerText = '-';
+        }
+    </script>
+</body>
+</html>
