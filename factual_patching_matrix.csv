@@ -1,0 +1,13 @@
+Vendor,Operating System Name,Operating System Version,Operating Build Version,Latest Vendor Version,Latest Vendor Build,Latest Release Date,EOL/EOS Date,Compliance Status,Notes
+Microsoft,Windows Server,2012 R2,[Enter System Build],2012 R2,[Check MS Catalog],[Check MS Catalog],2023-10-10,,
+Microsoft,Windows Server,2016,[Enter System Build],2016,[Check MS Catalog],[Check MS Catalog],2027-01-12,,
+Microsoft,Windows Server,2019,[Enter System Build],2019,[Check MS Catalog],[Check MS Catalog],2029-01-09,,
+Microsoft,Windows Server,2022,[Enter System Build],2022,[Check MS Catalog],[Check MS Catalog],2031-10-14,,
+Microsoft,Windows 10,22H2,[Enter System Build],22H2,[Check MS Catalog],[Check MS Catalog],2025-10-14,,
+Red Hat,RHEL,7,[Enter System Build],7,[Check Red Hat Errata],[Check Red Hat Errata],2024-06-30,,
+Red Hat,RHEL,8,[Enter System Build],8,[Check Red Hat Errata],[Check Red Hat Errata],2029-05-31,,
+Red Hat,RHEL,9,[Enter System Build],9,[Check Red Hat Errata],[Check Red Hat Errata],2032-05-31,,
+Ubuntu,Ubuntu LTS,20.04 LTS,[Enter System Build],20.04 LTS,[Check Canonical],[Check Canonical],2025-04-02,,
+Ubuntu,Ubuntu LTS,22.04 LTS,[Enter System Build],22.04 LTS,[Check Canonical],[Check Canonical],2027-04-01,,
+VMware,ESXi,7.0,[Enter System Build],7.0,[Check VMware Patch],[Check VMware Patch],2025-04-02,,
+VMware,ESXi,8.0,[Enter System Build],8.0,[Check VMware Patch],[Check VMware Patch],2027-10-11,,

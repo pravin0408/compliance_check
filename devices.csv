@@ -1,0 +1,9 @@
+Device Name,Vendor,OS Name,OS Version,Current Build
+SRV-WIN-01,Microsoft,Windows Server,2019,10.0.17763
+SRV-LINUX-01,Redhat,RHEL,8,8.10
+SRV-SUSE-01,SUSE,Linux,15,15.5
+NET-CISCO-01,Cisco,IOS XE,17.6,17.6.6
+APL-DELL-01,Dell,OpenManage Enterprise,3.10,3.10.x
+APL-CITRIX-01,Citrix,NetScaler,13.1,13.1-49.13
+APL-BEYOND-01,BeyondTrust,Appliance,23.2,23.2.1
+VMW-VCENT-01,Broadcom,vcenter,8.0,8.0.2

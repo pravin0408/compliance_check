@@ -1,0 +1,5 @@
+Device Name,Vendor,Operating System Name,Operating System Version,Operating Build Version,Latest Vendor Version,Latest Vendor Build,Latest Release Date,EOL/EOS Date,Compliance Status,Notes
+SRV-WIN-01,Microsoft,Windows Server,2019,17763.4851,2019,17763.5576,2024-03-12,2029-01-09,,
+SRV-LINUX-01,Red Hat,RHEL,8.4,4.18.0-305,8.9,4.18.0-513,2023-11-14,2024-05-31,,
+SRV-OLD-01,Microsoft,Windows Server,2012 R2,9600.21620,2012 R2,9600.21620,2023-10-10,2023-10-10,,
+APP-IOS-01,Cisco,IOS XE,16.9.5,16.9.5,16.12.8,16.12.8,2023-05-18,2025-01-31,,
