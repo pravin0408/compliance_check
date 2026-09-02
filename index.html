@@ -297,7 +297,37 @@
 
                 const data = await response.json();
                 
-                let targetCycle = data.find(c => String(c.cycle) === osVersion);
+                // --- SMART VERSION MATCHING ---
+                // 1. Try exact match
+                let targetCycle = data.find(c => String(c.cycle).toLowerCase() === String(osVersion).toLowerCase());
+                
+                // 2. Try prefix match
+                if (!targetCycle) {
+                    let sortedCycles = [...data].sort((a, b) => String(b.cycle).length - String(a.cycle).length);
+                    targetCycle = sortedCycles.find(c => String(osVersion).toLowerCase().startsWith(String(c.cycle).toLowerCase()));
+                }
+                
+                // 3. Try fuzzy/substring match with OS name heuristics
+                if (!targetCycle) {
+                    let fuzzyMatches = data.filter(c => 
+                        String(c.cycle).toLowerCase().includes(String(osVersion).toLowerCase()) || 
+                        String(osVersion).toLowerCase().includes(String(c.cycle).toLowerCase())
+                    );
+                    
+                    if (fuzzyMatches.length > 0) {
+                        const osNameL = osName.toLowerCase();
+                        // Prioritize enterprise/education editions
+                        if (osNameL.includes('enterprise') || osNameL.includes('education')) {
+                            targetCycle = fuzzyMatches.find(c => String(c.cycle).toLowerCase().endsWith('-e')) || 
+                                         fuzzyMatches.find(c => String(c.cycle).toLowerCase().includes('lts')) || 
+                                         fuzzyMatches[0];
+                        } else if (osNameL.includes('server')) {
+                            targetCycle = fuzzyMatches.find(c => String(c.cycle).toLowerCase().includes('server')) || fuzzyMatches[0];
+                        } else {
+                            targetCycle = fuzzyMatches.find(c => String(c.cycle).toLowerCase().endsWith('-w')) || fuzzyMatches[0];
+                        }
+                    }
+                }
 
                 // Populate the bottom table regardless of compliance status
                 const tbody = document.querySelector('#recentReleases tbody');
