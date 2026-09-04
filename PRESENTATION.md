@@ -57,8 +57,8 @@ backgroundColor: #f8f9fa
 
 # 🟡 PROOF 2: Proprietary Engine Fallback
 
-**[ 📸 INSERT SCREENSHOT HERE ]**
-*(Go to live tool -> Enter: `Dell EMC`, `PowerStore`, `5.0`, `Build 2761110 (Release 5.0.0.2)` -> Take snip of Green Banners)*
+<img width="659" height="408" alt="image" src="https://github.com/user-attachments/assets/b781bdb6-fd18-48f4-8d2e-0a827412b408" />
+
 
 **What this proves:**
 * Public scanners fail here. Our tool intelligently stripped the string letters, recognized the "Dell-PowerStore" context, fell back to our embedded matrix, and confidently returned a secure compliance state.
@@ -67,8 +67,8 @@ backgroundColor: #f8f9fa
 
 # 🔴 PROOF 3: Catching Critical Risks 
 
-**[ 📸 INSERT SCREENSHOT HERE ]**
-*(Go to live tool -> Enter: `Microsoft`, `Windows 7`, `SP1` -> Take snip of Red Banners)*
+<img width="616" height="377" alt="image" src="https://github.com/user-attachments/assets/32fff190-ee30-426a-9049-0f4460c05615" />
+
 
 **What this proves:**
 * The tool instantly prevents audit failures by definitively catching missing baselines and expired operating systems.
@@ -78,8 +78,7 @@ backgroundColor: #f8f9fa
 
 # 🤖 The Automation Engine (CI/CD)
 
-**[ 📸 INSERT SCREENSHOT HERE ]**
-*(Take a snip of the 3 Green Checkmarks in your GitHub Actions pipeline)*
+<img width="954" height="371" alt="image" src="https://github.com/user-attachments/assets/5d1c5996-471c-4aa3-b21b-05ef4c47aea9" />
 
 **Quality Assurance Guaranteed:**
 * Protected by strict GitHub Actions pipelines.
