@@ -45,8 +45,9 @@ backgroundColor: #f8f9fa
 
 # 🟢 PROOF 1: Standard OS Compliance
 
-**[ 📸 INSERT SCREENSHOT HERE ]** 
-*(Go to live tool -> Enter: `Microsoft`, `Windows 11 Enterprise`, `24H2`, `10.0.26100.9278` -> Take snip of the Green Banners)*
+<img width="616" height="385" alt="image" src="https://github.com/user-attachments/assets/3d508d1e-fbef-4ff6-aed0-ba5b2515e071" />
+
+
 
 **What this proves:**
 * Tool successfully mapped "24H2" to the Enterprise lifecycle.
